@@ -3,3 +3,6 @@ env/
 
 # Hide sensitive information
 config.py
+
+# Hide logs
+log.txt
