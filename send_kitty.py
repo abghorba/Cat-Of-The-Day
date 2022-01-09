@@ -5,6 +5,7 @@ import json
 from config import CAT_API_KEY, MY_NUMBER, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 from twilio.rest import Client
 
+
 CAT_API_URL = 'https://api.thecatapi.com/v1'
 CAT_API_HEADER = {'x-api-key': CAT_API_KEY}
 
@@ -66,13 +67,32 @@ class TwilioMessageHandler():
 class CatAPIHandler():
     """Class to handle TheCatAPI services."""
 
-    def get_cat_image(self):
+    def __init__(self):
+        self.CATEGORY_IDS = {
+            "boxes": 5,
+            "clothes": 15,
+            "hats": 1,
+            "sinks": 14,
+            "space": 2,
+            "sunglasses": 4,
+            "ties": 7
+        }
+
+    def get_cat_image(self, category=None, get_fact=False):
         """Sends a request to TheCatAPI and retrieves only an
         image url.
 
         Parameters
         ----------
-        None
+        category : str (optional)
+            Optional parameter to get an image of a cat with a
+            particular category. Valid categories include
+            boxes, clothes, hats, sinks, space, sunglasses, and
+            ties.
+        get_fact : bool (optional)
+            Optional parameter to get an image of a cat along
+            with a fact. This parameter overrides the category
+            parameter, otherwise there will be an empty response.
 
         Returns
         -------
@@ -80,69 +100,66 @@ class CatAPIHandler():
             A list containing the image url and text message.
         
         """
+        # Configure query and message
+        # If we want a fact, we cannot combine queries even if category is specified
+        if get_fact:
+            query = '/images/search?has_breeds=1'
+        elif category in self.CATEGORY_IDS:
+            query = f'/images/search?category_ids={self.CATEGORY_IDS[category]}'
+            message = f"Here is a kitty with {category}!"
+        else:
+            query = '/images/search'
+            message = "Here is a random kitty!"
+
+        # Make request to API and get relevant data
         response = requests.get(
-            url = CAT_API_URL + '/images/search',
+            url = CAT_API_URL + query,
             headers = CAT_API_HEADER
         )
-
         data = response.json()
         image_url = data[0]['url']
 
-        # Log data
-        log_data(data)
-
-        return [image_url, "Here is a random kitty!"]
-    
-    def get_cat_image_with_fact(self):
-        """Sends a request to TheCatAPI to retrieve an image
-        along with facts.
-
-        Parameters
-        ----------
-        None
-
-        Returns
-        -------
-        list
-            A list containing the image url and text message.
-        
-        """
-        response = requests.get(
-            url = CAT_API_URL + '/images/search?has_breeds=1?category_ids=4',
-            headers = CAT_API_HEADER
-        )
-
-        data = response.json()
-        image_url = data[0]['url']
-        breed_info = data[0]['breeds']
-        breed_description = breed_info[0]['description']
+        # Must collect additional data if we want a fact
+        if get_fact:
+            breed_info = data[0]['breeds']
+            message = breed_info[0]['description']
 
         # Log data
+        log_data(f'Category: {category}')
+        log_data(f'Get Fact?: {get_fact}')
+        log_data(f'Query: {query}')
+        log_data(f'Message: {message}')
         log_data(data)
 
-        return [image_url, breed_description]
+        return [image_url, message]
 
 
 def main():
     """Test the script."""
 
+    # Clear the log file.
     with open('log.txt', 'w') as f:
         pass
 
     twilio_message_handler = TwilioMessageHandler()
     cat_api_handler = CatAPIHandler()
 
-    for i in range(10):
-        if i % 2 == 0:
-            kitty_image_url, kitty_fact = cat_api_handler.get_cat_image_with_fact()
-        else:
-            kitty_image_url, kitty_fact = cat_api_handler.get_cat_image()
+    for i in range(12):
+        if i % 4 == 0:
+            kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(get_fact=True)
+        elif i % 4 == 1:
+            kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(category="sunglasses")
+        elif i % 4 == 2:
+            kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(category="clothes")
+        elif i % 4 == 3:
+            kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(category="hats")
 
         twilio_message_handler.send_message(
             receving_number = MY_NUMBER,
             text_message = kitty_fact,
             image_url = kitty_image_url
         )
+        time.sleep(10)
 
 if __name__ == "__main__":
     main()
