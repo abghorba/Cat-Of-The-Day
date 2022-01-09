@@ -137,34 +137,3 @@ class CatAPIHandler():
         log_data(data)
 
         return [image_url, message]
-
-
-def main():
-    """Test the script."""
-
-    # Clear the log file.
-    with open('log.txt', 'w') as f:
-        pass
-
-    twilio_message_handler = TwilioMessageHandler()
-    cat_api_handler = CatAPIHandler()
-
-    for i in range(100):
-        # if i % 4 == 0:
-        kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(get_fact=True)
-        # elif i % 4 == 1:
-        #     kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(category="sunglasses")
-        # elif i % 4 == 2:
-        #     kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(category="clothes")
-        # elif i % 4 == 3:
-        #     kitty_image_url, kitty_fact = cat_api_handler.get_cat_image(category="hats")
-
-        # twilio_message_handler.send_message(
-        #     receving_number = MY_NUMBER,
-        #     text_message = kitty_fact,
-        #     image_url = kitty_image_url
-        # )
-        # time.sleep(10)
-
-if __name__ == "__main__":
-    main()

@@ -1,4 +1,4 @@
-from send_kitty import CatAPIHandler
+from handlers import CatAPIHandler
 import pytest
 
 
