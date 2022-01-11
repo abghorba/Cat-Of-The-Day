@@ -51,7 +51,9 @@ class TwilioMessageHandler():
 
         Returns
         -------
-        None
+        status : str
+            A string containing the message status along
+            with the security identifier.
         
         """
         message = self.twilio_client.messages.create(
@@ -60,8 +62,10 @@ class TwilioMessageHandler():
             body = text_message,
             media_url = [image_url]
         )
-        print(f"Message has been {message.status} with SID {message.sid}")
-        log_data(f"Message has been {message.status} with SID {message.sid}")
+        status = f"Message has been {message.status} with SID {message.sid}"
+        print(status)
+        log_data(status)
+        return status
 
 
 class CatAPIHandler():
