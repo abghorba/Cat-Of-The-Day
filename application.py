@@ -7,7 +7,7 @@ app = Flask(__name__)
 twilio = TwilioMessageHandler()
 cat_api = CatAPIHandler()
 
-@app.route("/sms", methods=['GET', 'POST'])
+@app.route("/sms", methods=['POST'])
 def sms_reply():
     """Respond to incoming messages."""
     if request.method == "POST":
@@ -23,7 +23,7 @@ def sms_reply():
         query = set(query)
 
         # Find keywords in query to determine appropriate response
-        if 'cat' in query or 'kitty' in query:
+        if 'cat' in query or 'cats' in query or 'kitty' in query or 'kitties' in query:
             if 'fact' in query:
                 kitty_image_url, message = cat_api.get_cat_image(get_fact=True)
             elif 'sunglasses' in query:
@@ -45,12 +45,11 @@ def sms_reply():
         else:
             kitty_image_url, message = None, "Sorry, I didn't understand your request."
 
-        # Send message
-        message_status = twilio.send_message(
-                receving_number=incoming_number,
-                text_message=message,
-                image_url=kitty_image_url
-                )
+        # Send message and get the message sid
+        message_sid = twilio.send_message(
+                        receiving_number=incoming_number,
+                        text_message=message,
+                        image_url=kitty_image_url)
 
         # Create JSON response.
         response = {
@@ -58,7 +57,7 @@ def sms_reply():
             "receiving_number": incoming_number,
             "outgoing_message": message,
             "image_url": kitty_image_url,
-            "status": message_status
+            "status": message_sid
         }
         return response
 

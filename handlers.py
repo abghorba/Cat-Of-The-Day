@@ -1,8 +1,7 @@
 import requests
 import time
-import json
 
-from config import CAT_API_KEY, MY_NUMBER, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+from config import CAT_API_KEY, TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 from twilio.rest import Client
 
 
@@ -10,14 +9,13 @@ CAT_API_URL = 'https://api.thecatapi.com/v1'
 CAT_API_HEADER = {'x-api-key': CAT_API_KEY}
 
 
-def log_data(json_data):
-    """Logs the json response from each request to TheCatAPI
-    and the Twilio message status/SID.
+def log_data(data):
+    """Logs data from specified areas in the API handler classes.
     
     Parameters
     ----------
-    json_data : JSON
-        Data to be logged in a JSON object.
+    data : str
+        Data to be logged.
 
     Returns
     -------
@@ -25,9 +23,7 @@ def log_data(json_data):
 
     """
     with open('log.txt', 'a') as f:
-        json_formatted_str = json.dumps(json_data, indent=2)
-        f.write(json_formatted_str)
-        f.write('\n')
+        f.write(data)
 
 
 class TwilioMessageHandler():
@@ -37,7 +33,7 @@ class TwilioMessageHandler():
         """Initializes the object with the Twilio client."""
         self.twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
-    def send_message(self, receving_number, text_message, image_url=None):
+    def send_message(self, receiving_number, text_message, image_url=None):
         """Uses Twilio to send a message to a specified number.
 
         Parameters
@@ -51,21 +47,30 @@ class TwilioMessageHandler():
 
         Returns
         -------
-        status : str
-            A string containing the message status along
-            with the security identifier.
+        str
+            A string containing the message security identifier.
         
         """
         message = self.twilio_client.messages.create(
             from_ = TWILIO_PHONE_NUMBER,
-            to = receving_number,
+            to = receiving_number,
             body = text_message,
             media_url = [image_url]
         )
-        status = f"Message has been {message.status} with SID {message.sid}"
-        print(status)
-        log_data(status)
-        return status
+
+        # Log data
+        data = (f'Message Details:\n'
+                f'  Receiving Number: {receiving_number}\n'
+                f'  Outgoing Message: {text_message}\n'
+                f'  Image URL: {image_url}\n'
+                f'  Message SID: {message.sid}\n'
+                f'  Message Status: {message.status}\n'
+                '\n')
+        log_data(data)
+
+        print(f"Message has been {message.status} with SID {message.sid}")
+
+        return message.sid
 
 
 class CatAPIHandler():
@@ -120,13 +125,13 @@ class CatAPIHandler():
             url = CAT_API_URL + query,
             headers = CAT_API_HEADER
         )
-        data = response.json()
-        image_url = data[0]['url']
+        json_data = response.json()
+        image_url = json_data[0]['url']
 
         # Must collect additional data if we want a fact
         if get_fact:
             try:
-                breed_info = data[0]['breeds']
+                breed_info = json_data[0]['breeds']
                 message = breed_info[0]['description']
             except IndexError as e: #There's a bug in the API service
                 print("Exception! " + str(e))
@@ -134,10 +139,10 @@ class CatAPIHandler():
                 log_data(str(e))
 
         # Log data
-        log_data(f'Category: {category}')
-        log_data(f'Get Fact?: {get_fact}')
-        log_data(f'Query: {query}')
-        log_data(f'Message: {message}')
+        data = (f'The Cat API Parameters:\n'
+                f'  Category: {category}\n'
+                f'  Get Fact?: {get_fact}\n'
+                f'  API Query: {query}\n')
         log_data(data)
 
         return [image_url, message]
