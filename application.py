@@ -1,7 +1,8 @@
+from nis import cat
 from flask import Flask, request
 from handlers import CatAPIHandler, TextProcessor, TwilioMessageHandler
 
-import random
+import re
 
 app = Flask(__name__)
 twilio = TwilioMessageHandler()
@@ -18,35 +19,38 @@ def sms_reply():
 
         print(f"Message received: {incoming_message}")
 
-        # Strip all punctuation, lowercase all characters, and tokenize by word
-        query = text_processor.preprocess_text(incoming_message)
-        random.shuffle(query)
+        # Clean the incoming message to be usable
+        query = incoming_message.strip()
+        query = re.sub(r"[^\w\s]", "", query)
+        query = query.lower()
 
         # Find keywords in query to determine appropriate response
         if "cat" in query or "kitty" in query:
-            # if "fact" in query:
-            #     kitty_image_url, message = cat_api.get_cat_image(get_fact=True)
-            # else:
-            wanted_category = None
-            wanted_breed = None
-            for keyword in query:
-                if keyword in cat_api.CATEGORY_IDS:
-                    wanted_category = keyword
-                    break
-                elif keyword in cat_api.BREED_IDS:
-                    wanted_breed = keyword
-                    break
-            kitty_image_url, message = cat_api.get_cat_image(
-                category=wanted_category, breed=wanted_breed
+            requested_breed, requested_category = None, None
+
+            # Check if any of the breeds are in the query string
+            for breed in cat_api.BREED_IDS.keys():
+                if breed in query:
+                    requested_breed = breed
+
+            # Check if any of the categories are in query
+            for category in cat_api.CATEGORY_IDS.keys():
+                if category in query:
+                    requested_category = category
+
+            # Make the API call
+            cat_image_url, message = cat_api.get_cat_image(
+                category=requested_category, breed=requested_breed
             )
+
         else:
-            kitty_image_url, message = None, "Sorry, I didn't understand your request."
+            cat_image_url, message = None, "Sorry, I didn't understand your request."
 
         # Send message and get the message sid
         message_sid = twilio.send_message(
             receiving_number=incoming_number,
             text_message=message,
-            image_url=kitty_image_url,
+            image_url=cat_image_url,
         )
 
         # Create JSON response.
@@ -54,7 +58,7 @@ def sms_reply():
             "incoming_message": incoming_message,
             "receiving_number": incoming_number,
             "outgoing_message": message,
-            "image_url": kitty_image_url,
+            "image_url": cat_image_url,
             "status": message_sid,
         }
         return response

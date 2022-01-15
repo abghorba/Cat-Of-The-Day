@@ -10,51 +10,46 @@ class TestCatAPIHandler:
         pass
 
     @pytest.mark.parametrize(
-        "category,get_fact,expected",
+        "category,breed,expected",
         [
-            (None, False, "Here is a random cat!"),
-            (None, False, "Here is a random cat!"),
-            ("sunglass", False, "Here is a cat wearing sunglasses!"),
-            ("sunglass", False, "Here is a cat wearing sunglasses!"),
-            ("clothes", False, "Here is a cat wearing clothes!"),
-            ("clothes", False, "Here is a cat wearing clothes!"),
-            ("box", False, "Here is a cat in a box!"),
-            ("box", False, "Here is a cat in a box!"),
-            ("bling", False, "Here is a random cat!"),
-            ("bling", False, "Here is a random cat!"),
-            ("stuff", False, "Here is a random cat!"),
-            ("stuff", False, "Here is a random cat!"),
-            (None, True, "Here is a random cat!"),
-            (None, True, "Here is a random cat!"),
-            ("sunglass", True, "Here is a cat wearing sunglasses!"),
-            ("sunglass", True, "Here is a cat wearing sunglasses!"),
-            ("clothes", True, "Here is a cat wearing clothes!"),
-            ("clothes", True, "Here is a cat wearing clothes!"),
-            ("box", True, "Here is a cat in a box!"),
-            ("box", True, "Here is a cat in a box!"),
-            ("bling", True, "Here is a random cat!"),
-            ("bling", True, "Here is a random cat!"),
-            ("stuff", True, "Here is a random cat!"),
-            ("stuff", True, "Here is a random cat!"),
+            (None, None, "Here is a random cat!"),
+            ("sunglass", None, "Here is a cat wearing sunglasses!"),
+            ("clothes", None, "Here is a cat wearing clothes!"),
+            ("box", None, "Here is a cat in a box!"),
+            ("sink", None, "Here is a cat in a sink!"),
+            ("space", None, "Here is a cat in space!"),
+            ("hat", None, "Here is a cat wearing a hat!"),
+            ("tie", None, "Here is a cat wearing a tie!"),
+            ("bling", None, "Here is a random cat!"),
+            ("stuff", None, "Here is a random cat!"),
+            (None, "bengal", "Here is a Bengal cat!"),
+            (None, "bambino", "Here is a Bambino cat!"),
+            (None, "american shorthair", "Here is a American Shorthair cat!"),
+            (None, "javanese", "Here is a Javanese cat!"),
+            (None, "egyptian mau", "Here is a Egyptian Mau cat!"),
+            (None, "siamese", "Here is a Siamese cat!"),
+            ("sunglass", "bengal", "Here is a cat wearing sunglasses!"),
+            ("clothes", "bambino", "Here is a cat wearing clothes!"),
+            ("box", "american shorthair", "Here is a cat in a box!"),
+            ("space", "american shorthair", "Here is a cat in space!"),
+            ("bling", "javanese", "Here is a Javanese cat!"),
+            ("stuff", "egyptian mau", "Here is a Egyptian Mau cat!"),
+            ("thing", "siamese", "Here is a Siamese cat!"),
+            ("hat", "kitty kat", "Here is a cat wearing a hat!"),
+            ("tie", "pretty kitty", "Here is a cat wearing a tie!"),
+            ("clothes", "smelly cat", "Here is a cat wearing clothes!"),                        
         ],
     )
-    def test_get_cat_image(self, category, get_fact, expected):
-        kitty_image_url, kitty_fact = self.cat_api.get_cat_image(
-            category=category, get_fact=get_fact
+    def test_get_cat_image(self, category, breed, expected):
+        cat_image_url, message = self.cat_api.get_cat_image(
+            category=category, breed=breed
         )
 
-        print(kitty_image_url)
-        assert (
-            ".jpg" in kitty_image_url
-            or ".png" in kitty_image_url
-            or ".gif" in kitty_image_url
-        )
+        print(cat_image_url)
+        assert any(image_type in cat_image_url for image_type in ['.jpg', '.png', 'gif'])
 
-        print(kitty_fact)
-        if get_fact:
-            assert expected not in kitty_fact
-        else:
-            assert expected in kitty_fact
+        print(message)
+        assert expected == message
 
     @pytest.mark.parametrize(
         "expected_key,expected_id",

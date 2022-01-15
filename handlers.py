@@ -34,6 +34,8 @@ def log_data(data):
         f.write(data)
 
 
+# Work in progress
+# Use Natural Language Processing to understand user requests
 class TextProcessor:
     def preprocess_text(self, text):
         """Preprocesses text by stripping whitespace, removing
@@ -140,9 +142,9 @@ class CatAPIHandler:
 
         """
         category_ids = {}
-        query = "/categories"
+        parameter = "/categories"
 
-        response = requests.get(url=CAT_API_URL + query, headers=CAT_API_HEADER)
+        response = requests.get(url=CAT_API_URL + parameter, headers=CAT_API_HEADER)
         # list of each category
         json_data = response.json()
 
@@ -170,9 +172,9 @@ class CatAPIHandler:
 
         """
         breed_ids = {}
-        query = "/breeds"
+        parameter = "/breeds"
 
-        response = requests.get(url=CAT_API_URL + query, headers=CAT_API_HEADER)
+        response = requests.get(url=CAT_API_URL + parameter, headers=CAT_API_HEADER)
         # list of each breed
         json_data = response.json()
 
@@ -183,7 +185,7 @@ class CatAPIHandler:
 
         return breed_ids
 
-    def get_cat_image(self, category=None, breed=None, get_fact=False):
+    def get_cat_image(self, category=None, breed=None):
         """Sends a request to TheCatAPI and retrieves only an
         image url.
 
@@ -197,10 +199,6 @@ class CatAPIHandler:
         breed : str (optional)
             Optional parameter to get an image of a cat that is
             a specified breed.
-        get_fact : bool (optional)
-            Optional parameter to get an image of a cat along
-            with a fact. This parameter overrides the category
-            parameter, otherwise there will be an empty response.
 
         Returns
         -------
@@ -209,47 +207,37 @@ class CatAPIHandler:
 
         """
         # Configure query and message
-        # If we want a fact, we cannot combine queries even if category is specified
-        if get_fact:
-            query = "/images/search?has_breeds=1"
-        elif category in self.CATEGORY_IDS:
-            query = f"/images/search?category_ids={self.CATEGORY_IDS[category]}"
+        # Category will get precedence if both category and breed are specified
+        if category in self.CATEGORY_IDS:
+            parameter = f"/images/search?category_ids={self.CATEGORY_IDS[category]}"
             if category in {"hat", "tie"}:
                 message = f"Here is a cat wearing a {category}!"
             elif category in {"box", "sink"}:
                 message = f"Here is a cat in a {category}!"
             elif category == "clothes":
                 message = f"Here is a cat wearing clothes!"
+            elif category == "space":
+                message = f"Here is a cat in space!"
             else:
                 message = f"Here is a cat wearing sunglasses!"
         elif breed in self.BREED_IDS:
-            query = f"/images/search?breed_ids={self.BREED_IDS[breed]}"
+            parameter = f"/images/search?breed_ids={self.BREED_IDS[breed]}"
             message = f"Here is a {breed.title()} cat!"
         else:
-            query = "/images/search"
+            parameter = "/images/search"
             message = "Here is a random cat!"
 
         # Make request to API and get relevant data
-        response = requests.get(url=CAT_API_URL + query, headers=CAT_API_HEADER)
+        response = requests.get(url=CAT_API_URL + parameter, headers=CAT_API_HEADER)
         json_data = response.json()
         image_url = json_data[0]["url"]
-
-        # Must collect additional data if we want a fact
-        if get_fact:
-            try:
-                breed_info = json_data[0]["breeds"]
-                message = breed_info[0]["description"]
-            except IndexError as e:  # There's a bug in the API service
-                print("Exception! " + str(e))
-                message = "Here is a random cat!"
-                log_data(str(e))
 
         # Log data
         data = (
             f"The Cat API Parameters:\n"
-            f"  Category: {category}\n"
-            f"  Get Fact?: {get_fact}\n"
-            f"  API Query: {query}\n"
+            f"  Category?: {category}\n"
+            f"  Breed?: {breed}\n"
+            f"  API Parameter: {parameter}\n"
             f"  Response Code: {response.status_code}\n"
         )
         log_data(data)
