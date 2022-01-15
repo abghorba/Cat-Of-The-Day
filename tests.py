@@ -37,7 +37,7 @@ class TestCatAPIHandler:
             ("thing", "siamese", "Here is a Siamese cat!"),
             ("hat", "kitty kat", "Here is a cat wearing a hat!"),
             ("tie", "pretty kitty", "Here is a cat wearing a tie!"),
-            ("clothes", "smelly cat", "Here is a cat wearing clothes!"),                        
+            ("clothes", "smelly cat", "Here is a cat wearing clothes!"),
         ],
     )
     def test_get_cat_image(self, category, breed, expected):
@@ -46,7 +46,9 @@ class TestCatAPIHandler:
         )
 
         print(cat_image_url)
-        assert any(image_type in cat_image_url for image_type in ['.jpg', '.png', 'gif'])
+        assert any(
+            image_type in cat_image_url for image_type in [".jpg", ".png", "gif"]
+        )
 
         print(message)
         assert expected == message

@@ -1,8 +1,5 @@
-from nis import cat
 from flask import Flask, request
 from handlers import CatAPIHandler, TextProcessor, TwilioMessageHandler
-
-import re
 
 app = Flask(__name__)
 twilio = TwilioMessageHandler()
@@ -20,23 +17,19 @@ def sms_reply():
         print(f"Message received: {incoming_message}")
 
         # Clean the incoming message to be usable
-        query = incoming_message.strip()
-        query = re.sub(r"[^\w\s]", "", query)
-        query = query.lower()
+        query = text_processor.clean_text(incoming_message)
 
         # Find keywords in query to determine appropriate response
         if "cat" in query or "kitty" in query:
-            requested_breed, requested_category = None, None
-
-            # Check if any of the breeds are in the query string
-            for breed in cat_api.BREED_IDS.keys():
-                if breed in query:
-                    requested_breed = breed
+            # Check if any of the breeds are in query
+            requested_breed = text_processor.find_keywords_in_text(
+                cat_api.BREED_IDS, query
+            )
 
             # Check if any of the categories are in query
-            for category in cat_api.CATEGORY_IDS.keys():
-                if category in query:
-                    requested_category = category
+            requested_category = text_processor.find_keywords_in_text(
+                cat_api.CATEGORY_IDS, query
+            )
 
             # Make the API call
             cat_image_url, message = cat_api.get_cat_image(

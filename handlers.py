@@ -1,3 +1,4 @@
+import random
 import re
 import requests
 
@@ -34,9 +35,58 @@ def log_data(data):
         f.write(data)
 
 
-# Work in progress
-# Use Natural Language Processing to understand user requests
+# Want to use Natural Language Processing to understand user requests
 class TextProcessor:
+    """Class to handle text processing."""
+
+    def clean_text(self, text):
+        """Clean the text to be usable. Strips leading/trailing
+        whitespace, strips punctuation, and converts string to
+        lowercase.
+
+        Parameters
+        ----------
+        text : str
+            The text to be cleaned.
+
+        Returns
+        -------
+        clean_text : str
+            The text that has been cleaned.
+
+        """
+        clean_text = text.strip()
+        clean_text = re.sub(r"[^\w\s]", "", clean_text)
+        clean_text = clean_text.lower()
+        return clean_text
+
+    def find_keywords_in_text(self, keywords, text):
+        """Given a dictionary of keywords, finds if any keyword
+        exists in a text.
+
+        Parameters
+        ----------
+        keywords : dict
+            A dictionary containing the keywords to search for.
+        text : str
+            The text to search for keywords in.
+
+        Returns
+        -------
+        key : str or None
+            The first keyword that is found in text.
+
+        """
+        # If text has multiple keywords, find the first keyword randomly
+        keywords_list = list(keywords.keys())
+        random.shuffle(keywords_list)
+
+        for key in keywords_list:
+            if key in text:
+                return key
+
+        return None
+
     def preprocess_text(self, text):
         """Preprocesses text by stripping whitespace, removing
         punctuation, changing all characters to lowercase,
