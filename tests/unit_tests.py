@@ -1,13 +1,14 @@
-from handlers import CatAPIHandler
 import pytest
+import logging
+
+from helpers.cat_api import CatAPIHandler
+from helpers.text_processor import TextProcessor
+from helpers.twilio import TwilioMessageHandler
 
 
-class TestCatAPIHandler:
+class TestCatAPIHandler():
+
     cat_api = CatAPIHandler()
-
-    # Clear the log file.
-    with open("log.txt", "w") as f:
-        pass
 
     @pytest.mark.parametrize(
         "category,breed,expected",

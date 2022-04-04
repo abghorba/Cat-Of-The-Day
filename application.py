@@ -1,11 +1,18 @@
+import json
+import logging
+
 from flask import Flask, request
-from handlers import CatAPIHandler, TextProcessor, TwilioMessageHandler
+from helpers.cat_api import CatAPIHandler
+from helpers.text_processor import TextProcessor
+from helpers.twilio import TwilioMessageHandler
+
+
+ERROR_MESSAGE = "Sorry, I didn't understand your request."
 
 app = Flask(__name__)
 twilio = TwilioMessageHandler()
 cat_api = CatAPIHandler()
 text_processor = TextProcessor()
-
 
 @app.route("/sms", methods=["POST"])
 def sms_reply():
@@ -37,7 +44,7 @@ def sms_reply():
             )
 
         else:
-            cat_image_url, message = None, "Sorry, I didn't understand your request."
+            cat_image_url, message = None, ERROR_MESSAGE
 
         # Send message and get the message sid
         message_sid = twilio.send_message(
@@ -46,7 +53,7 @@ def sms_reply():
             image_url=cat_image_url,
         )
 
-        # Create JSON response.
+        # Create response dictionary.
         response = {
             "incoming_message": incoming_message,
             "receiving_number": incoming_number,
@@ -54,8 +61,9 @@ def sms_reply():
             "image_url": cat_image_url,
             "status": message_sid,
         }
-        return response
+        return json.dumps(response)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(filename='logs/application.log', encoding='utf-8', level=logging.INFO)
     app.run()
