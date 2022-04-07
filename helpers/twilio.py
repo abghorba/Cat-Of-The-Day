@@ -13,6 +13,7 @@ class TwilioMessageHandler():
 
     def __init__(self):
         """Initializes the object with the Twilio client."""
+
         self.twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
 
     def send_message(self, receiving_number, text_message, image_url=None):
@@ -35,15 +36,15 @@ class TwilioMessageHandler():
         # Log data
         data = (
             f"Message Details:\n"
-            f"  Receiving Number: {receiving_number}\n"
-            f"  Outgoing Message: {text_message}\n"
-            f"  Image URL: {image_url}\n"
-            f"  Message SID: {message.sid}\n"
-            f"  Message Status: {message.status}\n"
+            f"    Receiving Number: {receiving_number}\n"
+            f"    Outgoing Message: {text_message}\n"
+            f"    Image URL: {image_url}\n"
+            f"    Message SID: {message.sid}\n"
+            f"    Message Status: {message.status}\n"
             "\n"
         )
         logging.info(data)
 
-        print(f"Message has been {message.status} with SID {message.sid}")
+        logging.info(f"Message has been {message.status} with SID {message.sid}")
 
         return message.sid

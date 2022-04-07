@@ -108,10 +108,10 @@ class CatAPIHandler:
         # Log data
         data = (
             f"The Cat API Parameters:\n"
-            f"  Category?: {category}\n"
-            f"  Breed?: {breed}\n"
-            f"  API Parameter: {parameter}\n"
-            f"  Response Code: {response.status_code}\n"
+            f"    Category?: {category}\n"
+            f"    Breed?: {breed}\n"
+            f"    API Parameter: {parameter}\n"
+            f"    Response Code: {response.status_code}\n"
         )
         logging.info(data)
 
