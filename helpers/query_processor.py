@@ -6,7 +6,7 @@ from nltk.stem import WordNetLemmatizer
 
 
 # Want to use Natural Language Processing to understand user requests
-class TextProcessor():
+class QueryProcessor():
     """Class to handle text processing."""
 
     def clean_text(self, text):

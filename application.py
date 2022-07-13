@@ -4,9 +4,9 @@ import os
 
 from datetime import datetime
 from flask import Flask, request
-from helpers.cat_api import CatAPIHandler
-from helpers.text_processor import TextProcessor
-from helpers.twilio import TwilioMessageHandler
+from helpers.the_cat_api_handler import CatAPIHandler
+from helpers.query_processor import TextProcessor
+from helpers.twilio_messaging import TwilioMessageHandler
 
 
 ERROR_MESSAGE = "Sorry, I didn't understand your request."

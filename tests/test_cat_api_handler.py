@@ -1,9 +1,9 @@
 import pytest
 import logging
 
-from helpers.cat_api import CatAPIHandler
-from helpers.text_processor import TextProcessor
-from helpers.twilio import TwilioMessageHandler
+from helpers.the_cat_api_handler import CatAPIHandler
+from helpers.query_processor import QueryProcessor
+from helpers.twilio_messaging import TwilioMessageHandler
 
 
 class TestCatAPIHandler():

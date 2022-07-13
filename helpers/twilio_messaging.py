@@ -1,10 +1,8 @@
 import logging
 
-from config import (
-    TWILIO_ACCOUNT_SID,
-    TWILIO_AUTH_TOKEN,
-    TWILIO_PHONE_NUMBER,
-)
+from helpers.configs import TWILIO_ACCOUNT_SID
+from helpers.configs import TWILIO_AUTH_TOKEN
+from helpers.configs import TWILIO_PHONE_NUMBER
 from twilio.rest import Client
 
 

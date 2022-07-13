@@ -1,7 +1,7 @@
 import logging
 import requests
 
-from config import CAT_API_KEY
+from helpers.configs import CAT_API_KEY
 from nltk.stem import WordNetLemmatizer
 
 
