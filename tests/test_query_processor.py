@@ -154,3 +154,4 @@ def test_find_key_phrases_in_text(key_phrases, text, expected_key_phrases_found)
     
     key_phrases_found = query_processor.find_key_phrases_in_text(key_phrases, text)
     assert key_phrases_found == expected_key_phrases_found
+    

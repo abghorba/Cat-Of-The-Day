@@ -24,7 +24,7 @@ class QueryProcessor():
             return ""
 
         clean_text = text.strip()
-        clean_text = re.sub(r"[^\w\s\']", "", clean_text)g
+        clean_text = re.sub(r"[^\w\s\']", "", clean_text)
         clean_text = clean_text.lower()
 
         return clean_text
@@ -39,8 +39,11 @@ class QueryProcessor():
         :return: A list of all preprocessed words
         """
 
+        if not text:
+            return []
+
         cleaned_text = self._clean_text(text)
-        text_tokens = word_tokenize(cleaned_text)
+        text_tokens = cleaned_text.split(" ")
 
         lemmatizer = WordNetLemmatizer()
         processed_text = []
@@ -100,7 +103,6 @@ class QueryProcessor():
             raise TypeError("text param must be a str")
 
         preprocessed_text = " ".join(self._preprocess_text(text))
-        print(preprocessed_text)
 
         found_key_phrases = {}
 
