@@ -42,19 +42,13 @@ def sms_reply():
         # Find keywords in query to determine appropriate response
         if "cat" in query or "kitty" in query:
             # Check if any of the breeds are in query
-            requested_breed = text_processor.find_keywords_in_text(
-                cat_api.BREED_IDS, query
-            )
+            requested_breed = text_processor.find_keywords_in_text(cat_api.BREED_IDS, query)
 
             # Check if any of the categories are in query
-            requested_category = text_processor.find_keywords_in_text(
-                cat_api.CATEGORY_IDS, query
-            )
+            requested_category = text_processor.find_keywords_in_text(cat_api.CATEGORY_IDS, query)
 
             # Make the API call
-            cat_image_url, message = cat_api.get_cat_image(
-                category=requested_category, breed=requested_breed
-            )
+            cat_image_url, message = cat_api.get_cat_image(category=requested_category, breed=requested_breed)
 
         else:
             cat_image_url, message = None, ERROR_MESSAGE

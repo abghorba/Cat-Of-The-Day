@@ -42,14 +42,10 @@ class TestCatAPIHandler:
         ],
     )
     def test_get_cat_image(self, category, breed, expected):
-        cat_image_url, message = self.cat_api.get_cat_image(
-            category=category, breed=breed
-        )
+        cat_image_url, message = self.cat_api.get_cat_image(category=category, breed=breed)
 
         print(cat_image_url)
-        assert any(
-            image_type in cat_image_url for image_type in [".jpg", ".png", "gif"]
-        )
+        assert any(image_type in cat_image_url for image_type in [".jpg", ".png", "gif"])
 
         print(message)
         assert expected == message
