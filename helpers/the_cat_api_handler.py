@@ -1,12 +1,13 @@
 import logging
-import requests
 
-from helpers.configs import CAT_API_KEY
+import requests
 from nltk.stem import WordNetLemmatizer
 
+from helpers.configs import CAT_API_KEY
 
 CAT_API_URL = "https://api.thecatapi.com/v1"
 CAT_API_HEADER = {"x-api-key": CAT_API_KEY}
+
 
 class CatAPIHandler:
     """Class to handle TheCatAPI services."""

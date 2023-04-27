@@ -1,13 +1,13 @@
 import json
 import logging
 import os
-
 from datetime import datetime
-from flask import Flask, request
-from helpers.the_cat_api_handler import CatAPIHandler
-from helpers.query_processor import TextProcessor
-from helpers.twilio_messaging import TwilioMessageHandler
 
+from flask import Flask, request
+
+from helpers.query_processor import TextProcessor
+from helpers.the_cat_api_handler import CatAPIHandler
+from helpers.twilio_messaging import TwilioMessageHandler
 
 ERROR_MESSAGE = "Sorry, I didn't understand your request."
 
@@ -19,9 +19,12 @@ text_processor = TextProcessor()
 log_filename = datetime.now().strftime("%d%m%Y%H%M%S") + "-unit_tests"
 log_filepath = os.getcwd() + f"/logs/{log_filename}.log"
 
-logging.basicConfig(level=logging.INFO,
-                    format="%(asctime)s - %(module)s.py - %(funcName)s - [%(levelname)s] %(message)s",
-                    handlers=[logging.FileHandler(log_filepath), logging.StreamHandler()])
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(module)s.py - %(funcName)s - [%(levelname)s] %(message)s",
+    handlers=[logging.FileHandler(log_filepath), logging.StreamHandler()],
+)
+
 
 @app.route("/sms", methods=["POST"])
 def sms_reply():
@@ -38,7 +41,6 @@ def sms_reply():
 
         # Find keywords in query to determine appropriate response
         if "cat" in query or "kitty" in query:
-
             # Check if any of the breeds are in query
             requested_breed = text_processor.find_keywords_in_text(
                 cat_api.BREED_IDS, query

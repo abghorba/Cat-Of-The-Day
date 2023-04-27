@@ -1,12 +1,11 @@
 import logging
 
-from helpers.configs import TWILIO_ACCOUNT_SID
-from helpers.configs import TWILIO_AUTH_TOKEN
-from helpers.configs import TWILIO_PHONE_NUMBER
 from twilio.rest import Client
 
+from helpers.configs import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 
-class TwilioMessageHandler():
+
+class TwilioMessageHandler:
     """Class to handle Twilio services."""
 
     def __init__(self):

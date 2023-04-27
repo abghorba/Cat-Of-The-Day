@@ -1,13 +1,13 @@
-import pytest
 import logging
 
-from helpers.the_cat_api_handler import CatAPIHandler
+import pytest
+
 from helpers.query_processor import QueryProcessor
+from helpers.the_cat_api_handler import CatAPIHandler
 from helpers.twilio_messaging import TwilioMessageHandler
 
 
-class TestCatAPIHandler():
-
+class TestCatAPIHandler:
     cat_api = CatAPIHandler()
 
     @pytest.mark.parametrize(

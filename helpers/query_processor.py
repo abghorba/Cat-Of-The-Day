@@ -6,7 +6,7 @@ from nltk.stem import WordNetLemmatizer
 
 
 # Want to use Natural Language Processing to understand user requests
-class QueryProcessor():
+class QueryProcessor:
     """Class to handle text processing."""
 
     def clean_text(self, text):
@@ -42,9 +42,7 @@ class QueryProcessor():
         random.shuffle(keywords_list)
 
         for key in keywords_list:
-
             if key in text:
-
                 return key
 
         return None
@@ -69,9 +67,7 @@ class QueryProcessor():
         processed_text = []
 
         for word in text_tokens:
-
             if word not in stop_words:
-
                 lemma = lemmatizer.lemmatize(word)
                 processed_text.append(lemma)
 
