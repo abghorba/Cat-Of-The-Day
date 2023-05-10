@@ -1,10 +1,6 @@
-import logging
-
 import pytest
 
-from helpers.query_processor import QueryProcessor
-from helpers.the_cat_api_handler import CatAPIHandler
-from helpers.twilio_messaging import TwilioMessageHandler
+from src.the_cat_api_handler import CatAPIHandler
 
 
 class TestCatAPIHandler:
@@ -42,12 +38,12 @@ class TestCatAPIHandler:
         ],
     )
     def test_get_cat_image(self, category, breed, expected):
+        """Tests CatAPIHandler.get_cat_image()."""
+
         cat_image_url, message = self.cat_api.get_cat_image(category=category, breed=breed)
 
-        print(cat_image_url)
+        assert "cdn2.thecatapi.com/images/" in cat_image_url or "media.tumblr.com" in cat_image_url
         assert any(image_type in cat_image_url for image_type in [".jpg", ".png", "gif"])
-
-        print(message)
         assert expected == message
 
     @pytest.mark.parametrize(
@@ -63,6 +59,8 @@ class TestCatAPIHandler:
         ],
     )
     def test_get_category_ids(self, expected_key, expected_id):
+        """Tests CatAPIHandler._get_category_ids()."""
+
         # No need to call the get_category_ids function as it is
         # called upon instantiating the CatAPIHandler object
         assert self.cat_api.CATEGORY_IDS[expected_key] == expected_id
@@ -140,6 +138,8 @@ class TestCatAPIHandler:
         ],
     )
     def test_get_breed_ids(self, expected_key, expected_id):
+        """Tests CatAPIHandler._get_breed_ids()."""
+
         # No need to call the get_breed_ids function as it is
         # called upon instantiating the CatAPIHandler object
         assert self.cat_api.BREED_IDS[expected_key] == expected_id

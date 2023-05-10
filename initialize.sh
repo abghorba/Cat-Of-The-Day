@@ -10,6 +10,8 @@ if [ ! -d "env" ]; then
     pip install -r requirements.txt
     echo "Installing pre-commit hooks..."
     pre-commit install
+    echo "Downloading NLTK Data"
+    python3 -m nltk.downloader popular
     echo "Done!"
 fi
 
