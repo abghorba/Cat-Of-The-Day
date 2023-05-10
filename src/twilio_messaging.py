@@ -1,8 +1,8 @@
-import logging
+import logging as log
 
 from twilio.rest import Client
 
-from helpers.configs import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+from src.configs import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
 
 
 class TwilioMessageHandler:
@@ -11,7 +11,14 @@ class TwilioMessageHandler:
     def __init__(self):
         """Initializes the object with the Twilio client."""
 
-        self.twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+        self.successful_auth = False
+
+        try:
+            self.twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+            self.successful_auth = True
+
+        except:
+            pass
 
     def send_message(self, receiving_number, text_message, image_url=None):
         """
@@ -22,6 +29,9 @@ class TwilioMessageHandler:
         :param image_url: String url of the image that will be sent
         :return: String containing the message security identifier
         """
+
+        if not self.successful_auth:
+            return
 
         message = self.twilio_client.messages.create(
             from_=TWILIO_PHONE_NUMBER,
@@ -40,8 +50,8 @@ class TwilioMessageHandler:
             f"    Message Status: {message.status}\n"
             "\n"
         )
-        logging.info(data)
+        log.info(data)
 
-        logging.info(f"Message has been {message.status} with SID {message.sid}")
+        log.info(f"Message has been {message.status} with SID {message.sid}")
 
         return message.sid
