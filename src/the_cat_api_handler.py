@@ -3,7 +3,7 @@ import logging
 import requests
 from nltk.stem import WordNetLemmatizer
 
-from helpers.configs import CAT_API_KEY
+from src.configs import CAT_API_KEY
 
 CAT_API_URL = "https://api.thecatapi.com/v1"
 CAT_API_HEADER = {"x-api-key": CAT_API_KEY}
@@ -18,8 +18,7 @@ class CatAPIHandler:
 
     def _get_category_ids(self):
         """
-        Sends a request to The Cat API to retrieve all
-        category ids and compile into a dictionary.
+        Sends a request to The Cat API to retrieve all category ids and compile into a dictionary.
 
         :return: Dict mapping category keyword to category id
         """
@@ -43,8 +42,7 @@ class CatAPIHandler:
 
     def _get_breed_ids(self):
         """
-        Sends a GET request to The Cat API to retrieve all
-        breed ids and compile into a dictionary.
+        Sends a GET request to The Cat API to retrieve all breed ids and compile into a dictionary.
 
         :return: Dict mapping breed name to breed id
         """
@@ -66,30 +64,31 @@ class CatAPIHandler:
 
     def get_cat_image(self, category=None, breed=None):
         """
-        Sends a request to TheCatAPI and retrieves only an
-        image url.
+        Sends a request to TheCatAPI and retrieves only an image url.
 
-        :param category: Optional parameter to get an image of a cat with
-        a particular category. Valid categories include boxes, clothes,
-        hats, sinks, space, sunglasses, and ties.
-        :param breed: Optional parameter to get an image of a cat that is
-        a specified breed.
-        :return: List containing the image url and text message.
+        :param category: Optional parameter to get an image of a cat with a particular category. Valid categories
+        include boxes, clothes, hats, sinks, space, sunglasses, and ties.
+        :param breed: Optional parameter to get an image of a cat that is a specified breed.
+        :return: Tuple containing the image url and text message.
         """
 
-        # Configure query and message
         # Category will get precedence if both category and breed are specified
         if category in self.CATEGORY_IDS:
             parameter = f"/images/search?category_ids={self.CATEGORY_IDS[category]}"
 
             if category in {"hat", "tie"}:
                 message = f"Here is a cat wearing a {category}!"
+
             elif category in {"box", "sink"}:
                 message = f"Here is a cat in a {category}!"
+
             elif category == "clothes":
                 message = f"Here is a cat wearing clothes!"
+
             elif category == "space":
                 message = f"Here is a cat in space!"
+
+            # Default to getting a cat in sunglasses
             else:
                 message = f"Here is a cat wearing sunglasses!"
 
@@ -116,4 +115,4 @@ class CatAPIHandler:
         )
         logging.info(data)
 
-        return [image_url, message]
+        return image_url, message
