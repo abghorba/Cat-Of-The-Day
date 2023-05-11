@@ -11,14 +11,15 @@ class TwilioMessageHandler:
     def __init__(self):
         """Initializes the object with the Twilio client."""
 
-        self.successful_auth = False
-
         try:
             self.twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+            self.twilio_client.incoming_phone_numbers.list()
+            log.info("Authentication to Twilio successful")
             self.successful_auth = True
 
         except:
-            pass
+            log.error("Authentication to Twilio unsuccessful")
+            self.successful_auth = False
 
     def send_message(self, receiving_number, text_message, image_url=None):
         """

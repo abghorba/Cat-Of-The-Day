@@ -59,12 +59,14 @@ def sms_reply():
             # Make the API call
             cat_image_url, message = cat_api.get_cat_image(category=requested_category, breed=requested_breed)
 
-    # Send message and get the message sid
-    message_sid = twilio.send_message(
-        receiving_number=incoming_number,
-        text_message=message,
-        image_url=cat_image_url,
-    )
+    message_sid = None
+
+    if not app.config["TESTING"]:
+        message_sid = twilio.send_message(
+            receiving_number=incoming_number,
+            text_message=message,
+            image_url=cat_image_url,
+        )
 
     # Create response dictionary
     response = {
