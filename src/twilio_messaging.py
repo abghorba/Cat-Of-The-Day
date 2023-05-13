@@ -2,7 +2,7 @@ import logging as log
 
 from twilio.rest import Client
 
-from src.configs import TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_PHONE_NUMBER
+from src.configs import TwilioCredentials
 
 
 class TwilioMessageHandler:
@@ -12,7 +12,8 @@ class TwilioMessageHandler:
         """Initializes the object with the Twilio client."""
 
         try:
-            self.twilio_client = Client(TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN)
+            self.twilio_credentials = TwilioCredentials()
+            self.twilio_client = Client(self.twilio_credentials.account_sid, self.twilio_credentials.auth_token)
             self.twilio_client.incoming_phone_numbers.list()
             log.info("Authentication to Twilio successful")
             self.successful_auth = True
@@ -35,7 +36,7 @@ class TwilioMessageHandler:
             return
 
         message = self.twilio_client.messages.create(
-            from_=TWILIO_PHONE_NUMBER,
+            from_=self.twilio_credentials.phone_number,
             to=receiving_number,
             body=text_message,
             media_url=[image_url],
