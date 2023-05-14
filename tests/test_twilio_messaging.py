@@ -1,13 +1,14 @@
 import pytest
 
-from src.configs import MY_NUMBER
 from src.twilio_messaging import TwilioMessageHandler
+from src.utilities import MY_NUMBER, TwilioCredentials
 
 test_img_url = (
     "https://legendary-digital-network-assets.s3.amazonaws.com/wp-content/uploads/2020/07/13032616/maxresdefault.jpg"
 )
 
 
+@pytest.mark.skipif(TwilioCredentials().empty_credentials, reason="Twilio credentials not provided!")
 class TestTwilioMessageHandler:
     twilio = TwilioMessageHandler()
 
@@ -22,7 +23,7 @@ class TestTwilioMessageHandler:
             (MY_NUMBER, "Hi! This is is a test MMS.", test_img_url),
         ],
     )
-    def test_send_message_valid_auth(self, receiving_number, text_message, image_url):
+    def test_send_message(self, receiving_number, text_message, image_url):
         """Tests TwilioMessageHandler.send_message()."""
 
         message_sid = self.twilio.send_message(receiving_number, text_message, image_url)

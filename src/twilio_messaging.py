@@ -2,7 +2,7 @@ import logging as log
 
 from twilio.rest import Client
 
-from src.configs import TwilioCredentials
+from src.utilities import TwilioCredentials
 
 
 class TwilioMessageHandler:

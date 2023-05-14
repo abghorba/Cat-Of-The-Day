@@ -3,7 +3,7 @@ import logging
 import requests
 from nltk.stem import WordNetLemmatizer
 
-from src.configs import CAT_API_KEY
+from src.utilities import CAT_API_KEY
 
 CAT_API_URL = "https://api.thecatapi.com/v1"
 CAT_API_HEADER = {"x-api-key": CAT_API_KEY}
